@@ -7,13 +7,13 @@ import imutils
 import cv2
 import serial
 import time
-from arduinoInterface import setMove
+from arduinoInterface import arduinoInterface
 
 #COM port selection to establish connection with the ardiuno.
-PORT = '/dev/ttyACM0' #orignally set to /dev/ttyUSB0
-baud = 9600
+#PORT = '/dev/ttyACM0' #orignally set to /dev/ttyUSB0
+#baud = 9600
 
-arduino = serial.Serial(PORT, baud, timeout=0) 
+arduino = arduinoInterface()
 
 time.sleep(5)
 
@@ -105,58 +105,20 @@ while True: # infinite loop
 		movement = ' '
 		#if flag == 0:
 		start = 1;
-		if rad >= 50:
-#			arduino.write(setMove(0,0))
-	#		while arduino.in_waiting == 0:
-#				pass
-#			x = arduino.read(1)
-#			if(ord(x) == 250):
-#				print("success\n")
-#			else:
-#				print("failure\n")
-#				arduino.write(setMove(0,0))
-#				break
+		if rad >= 50 and arduino.getIsReady():
+			arduino.move(0,0)
 			print("stop")
 	
-		if xAxis >= 250 and xAxis <= 350 and rad < 50:
-			if arduino.in_waiting == 1 or start:
-				x= 250		
-				if start == 0:
-					x = ord(arduino.read(1))
-				if(x == 250):
-					print("success\n")
-				else:
-					print("failure\n")
-					arduino.write(setMove(0,0))
-					break
-				arduino.write(setMove(1,0))
-			start = 0
+		if xAxis >= 250 and xAxis <= 350 and rad < 50 and arduino.getIsReady():
+			arduino.move(1,0)
 			print("forward")
 
-		if xAxis <= 250 and rad < 50:
-#			arduino.write(setMove(0,2))
-#			while arduino.in_waiting == 0:
-#				pass
-#			x = arduino.read(1)
-#			if(ord(x) == 250):
-#				print("success\n")
-#			else:
-#				print("failure\n")
-#				arduino.write(setMove(0,0))
-#				break
+		if xAxis <= 250 and rad < 50 and arduino.getIsReady():
+			arduino.move(0,1)
 			print("turn left")
 
-		if xAxis >= 350 and rad < 50:
-#			arduino.write(setMove(0,-2))
-#			while arduino.in_waiting == 0:
-#				pass
-#			x = arduino.read(1)
-#			if(ord(x) == 250):
-#				print("success\n")
-#			else:
-#				print("failure\n")
-#				arduino.write(setMove(0,0))
-#				break
+		if xAxis >= 350 and rad < 50 and arduino.getIsReady():
+			arduino.move(0,-1)
 			print("turn right")
 
 		#if flag == 1:

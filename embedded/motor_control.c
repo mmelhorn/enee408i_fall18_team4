@@ -35,7 +35,7 @@ void move(float lin_vel_in, float ang_vel_in, float balance, int out[])
 		vel_R = MAX_VELOCITY;
 	else if (vel_L>MAX_VELOCITY)
 		vel_L = MAX_VELOCITY;
-		
+	
 	direct_motor_control(vel_L, vel_R, out);
 }
 
@@ -51,7 +51,7 @@ void direct_motor_control(int vel_L, int vel_R, int out[])
 		Left wheel moves forward when in_a = HIGH, in_b = LOW
 	*/
 	
-	if(vel_L > 0){				//LEFT WHEEL FORWARD
+	if(vel_L >= 0){				//LEFT WHEEL FORWARD
 		out[4] = 1;				//L_in_a
 		out[5] = 0;				//L_in_b
 		out[3] = vel_L;			//Left pwm
@@ -62,7 +62,7 @@ void direct_motor_control(int vel_L, int vel_R, int out[])
 		out[3] = abs(vel_L);	//Left pwm	
 	}
 	
-	if(vel_R > 0){				//RIGHT WHEEL FORWARD
+	if(vel_R >= 0){				//RIGHT WHEEL FORWARD
 		out[1] = 0;				//R_in_a
 		out[2] = 1;				//R_in_b
 		out[0] = vel_R;			//Right PWM

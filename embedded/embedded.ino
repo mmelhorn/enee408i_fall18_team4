@@ -1,6 +1,6 @@
-/* Embedded systems
- 
- */
+/*
+  Embedded systems
+*/
 
 #include "arduinoPins.h"
 #include "motor_control.c"
@@ -11,7 +11,12 @@ int ping_center_dist;
 double BOT_WIDTH = 33.02; //cm
 
 //motor_values contain the values to be sent from the arduino to the motor controller
-int motor_values[6];
+int motor_values[] = {0,0,0,0,0,0};
+
+unsigned char in = 0;
+
+int in_lin, in_ang;
+
 
 void setMotorValues();
 void getPing();
@@ -19,52 +24,43 @@ void getPing();
 void setup() {
   // initialize serial communication:
   Serial.begin(9600);
+  //initialize values for the motor control pins
   pinMode(IN_A_R, OUTPUT);
   pinMode(IN_B_R, OUTPUT);
   pinMode(IN_A_L, OUTPUT);
   pinMode(IN_B_L, OUTPUT);
   pinMode(PWM_R, OUTPUT);
   pinMode(PWM_L, OUTPUT);
-
-  motor_values[0] = 0;
-  motor_values[1] = 0;
-  motor_values[2] = 0;
-  motor_values[3] = 0;
-  motor_values[4] = 0;
-  motor_values[5] = 0;
 }
 
-unsigned char in = 0;
-int in_lin, in_ang;
 
 void loop() { 
 
-  /* TEST CODE
-   Serial.print(ping_left_dist);
-   Serial.print("in to left, ");
-   Serial.print(ping_right_dist);
-   Serial.print("in to right");
-   Serial.print(ping_center_dist);
-   Serial.print("in to center, ");
-   Serial.println();
-   */
-
   // loop until a command is recieved
   while(Serial.available() == 0){ 
-    //Serial.println("waiting for command");
+    //Serial.println("waiting for command");        //TEST CODE
     //delay(1000);
     }
 
-    // when command is recieved, get integer command
+    // when command is recieved, fetch command code
     in = Serial.parseInt();
-
+  
   getPing();
+  //in = 55;    //TEST CODE
 
+  /*
+    Interpret Command Codes
+    If motor control is requested, execute motor control, and write value of 250 to the Jetson to indicate that the action is complete.
+    If ping value is requested, write ping value.
+    If sent command is invalid, write value of 255
+  */
+  
+  //set bot movement to zero
   if(in == 0){
-    //stop bot movement
     move(0,0,.5,motor_values);
     Serial.write(250);            //write 250 if successful move
   }
+  //set bot movement to a given linear and angular velocity
   else if (in > 0 && in < 110){
     //calc values
     in_lin = in/10;
@@ -73,10 +69,10 @@ void loop() {
     if(in_ang == 0)
       in_ang = 1;
     //set movement
-    move((double)in_lin/10, (double)(in_ang-5), .5, motor_values);
+    move((float)in_lin/10, (float)(in_ang-5)/-5, .5, motor_values);
     Serial.write(250);            //write 250 if successful move
   }
-  /*else if (in == 200){
+  else if (in == 200){
     Serial.write(ping_left_dist);
   }
   else if (in == 201){
@@ -84,13 +80,16 @@ void loop() {
   }
   else if (in == 202){
     Serial.write(ping_right_dist);
-  }*/
-  else {
-    Serial.write(251);          //write 255 if command not recognized
   }
-
+  //Send error code
+  else {
+    Serial.write(255);
+  }
+  
+  //apply motor values
   setMotorValues();
-  delay(10);
+  //SHOULD THERE BE DELAY??
+  //delay(10);
 }
 
 
