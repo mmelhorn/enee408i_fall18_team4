@@ -1,11 +1,12 @@
 # Jetson interface for the arduino
+#BLAHBLAHBLAH
 
-from collections import deque
-from Adafruit_IO import Client
-import numpy as np
-import argparse
-import imutils
-import cv2
+#from collections import deque
+#from Adafruit_IO import Client
+#import numpy as np
+#import argparse
+#import imutils
+#import cv2
 import serial
 import time
 
@@ -53,10 +54,6 @@ while True:
 			break
 		arduino.write(setMove(1,0))
 	start = 0
-
-		
-		
-		
 
 
 
