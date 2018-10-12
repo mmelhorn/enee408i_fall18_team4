@@ -16,6 +16,8 @@ int motor_values[] = {0,0,0,0,0,0};
 unsigned char in = 0;
 
 int in_lin, in_ang;
+unsigned long time;
+int i;
 
 
 void setMotorValues();
@@ -31,6 +33,8 @@ void setup() {
   pinMode(IN_B_L, OUTPUT);
   pinMode(PWM_R, OUTPUT);
   pinMode(PWM_L, OUTPUT);
+  time = millis();
+  i=0;
 }
 
 
@@ -44,9 +48,23 @@ void loop() {
 
     // when command is recieved, fetch command code
     in = Serial.parseInt();
+    
+  
+  //Internal latency Test
+  //About 6-7ms per command
+  /*
+  in = 200;
+  if(i < 10){
+    i++;
+  }else{
+    time = millis() - time;
+    Serial.println(time);
+    time = millis();
+    i=0;
+  }
+  */
   
   getPing();
-  //in = 55;    //TEST CODE
 
   /*
     Interpret Command Codes
@@ -88,8 +106,6 @@ void loop() {
   
   //apply motor values
   setMotorValues();
-  //SHOULD THERE BE DELAY??
-  //delay(10);
 }
 
 

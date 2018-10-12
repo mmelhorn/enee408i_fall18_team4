@@ -7,6 +7,7 @@ class arduinoInterface:
 	def __init__(self):
 		#COM port selection to establish connection with the ardiuno.
 		PORT = '/dev/ttyACM0' #orignally set to /dev/ttyUSB0
+		#PORT = '/dev/ttyACM1'
 		baud = 9600
 		self.arduino = serial.Serial(PORT, baud, timeout=0)
 		#Flags and their default values
@@ -25,13 +26,10 @@ class arduinoInterface:
 		self.arduino.write(str(vel))
 	
 	def setFlags(self):		#add error and emergency handling
-		if self.arduino.in_waiting > 0:
-			ardIn = ord(self.arduino.read(1))
-			if ardIn == 250:
-				self.isReady = 1
-			elif ardIn == 255:
-				self.isReady = 1
-				self.isError = 1
+		if self.arduino.inWaiting() > 0:
+			self.isReady = 1
+		self.arduino.reset_input_buffer();
+			
 	
 	def getIsReady(self):
 		self.setFlags()
@@ -47,21 +45,6 @@ class arduinoInterface:
 		ping = [leftPingDist,centerPingDist,rightPingDist]
 		return ping
 
-	#start = 1;
-	#while True:
-		#if arduino.in_waiting == 1 or start:
-			#x= 250		
-			#if start == 0:
-				#x = ord(arduino.read(1))
-			#if(x == 250):
-				#print("success\n")
-			#else:
-				#print("failure\n")
-				#setMove(0,0)
-				#break
-			#setMove(1,0)
-		#start = 0
-
-
 	def done(self):
+		self.move(0,0)
 		self.arduino.close()

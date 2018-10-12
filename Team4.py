@@ -38,6 +38,8 @@ direction = ""
 #then that becomes the default video capturing device.
 if not args.get("video", False):
 	camera = cv2.VideoCapture(1)
+else:
+	print('elroy')
 
 prevMovement = ' '
 while True: # infinite loop
@@ -110,15 +112,15 @@ while True: # infinite loop
 			print("stop")
 	
 		if xAxis >= 250 and xAxis <= 350 and rad < 50 and arduino.getIsReady():
-			arduino.move(1,0)
+			arduino.move(4,0)
 			print("forward")
 
 		if xAxis <= 250 and rad < 50 and arduino.getIsReady():
-			arduino.move(0,1)
+			arduino.move(0,2)
 			print("turn left")
 
 		if xAxis >= 350 and rad < 50 and arduino.getIsReady():
-			arduino.move(0,-1)
+			arduino.move(0,-2)
 			print("turn right")
 
 		#if flag == 1:
@@ -156,6 +158,9 @@ while True: # infinite loop
 		if cv2.waitKey(1) == ord('q'):
 			break
 		#time.sleep(0.5)
+
+#Stop motors and close serial port
+#arduino.done()
 
 camera.release()
 cv2.destroyAllWindows()
