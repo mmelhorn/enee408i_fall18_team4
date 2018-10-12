@@ -4,6 +4,7 @@
 
 #include "arduinoPins.h"
 #include "motor_control.c"
+#include <Wire.h>
 
 int ping_right_dist;
 int ping_left_dist;
@@ -18,6 +19,7 @@ unsigned char in = 0;
 int in_lin, in_ang;
 unsigned long time;
 int i;
+unsigned char out[] = {0,0};  //out[0] is ready flag (1 == ready), out[1] is data
 
 
 void setMotorValues();
@@ -33,6 +35,9 @@ void setup() {
   pinMode(IN_B_L, OUTPUT);
   pinMode(PWM_R, OUTPUT);
   pinMode(PWM_L, OUTPUT);
+  Wire.begin(42);
+  Wire.onReceive(receiveEvent);
+  Wire.onRequest(requestEvent);
   time = millis();
   i=0;
 }
@@ -65,18 +70,34 @@ void loop() {
   */
   
   getPing();
+  
+  //apply motor values
+  setMotorValues();
+}
 
+void receiveEvent(int howMany){
+ //Get input
+ unsigned char in;
+  while(Wire.available()){
+   in = Wire.read();
+   Serial.println(in);
+   
+ }
+ Serial.println(in);
+ 
+ getPing();
+  
   /*
     Interpret Command Codes
     If motor control is requested, execute motor control, and write value of 250 to the Jetson to indicate that the action is complete.
     If ping value is requested, write ping value.
     If sent command is invalid, write value of 255
   */
-  
-  //set bot movement to zero
+ //set bot movement to zero
   if(in == 0){
     move(0,0,.5,motor_values);
-    Serial.write(250);            //write 250 if successful move
+    out[1] = 250;            //write 250 if successful move
+    out[0] = 1;
   }
   //set bot movement to a given linear and angular velocity
   else if (in > 0 && in < 110){
@@ -88,26 +109,40 @@ void loop() {
       in_ang = 1;
     //set movement
     move((float)in_lin/10, (float)(in_ang-5)/-5, .5, motor_values);
-    Serial.write(250);            //write 250 if successful move
+    out[1] = 250;            //write 250 if successful move
+    out[0] = 1;
   }
   else if (in == 200){
-    Serial.write(ping_left_dist);
+    out[1] = ping_left_dist;
+    out[0] = 1;
   }
   else if (in == 201){
-    Serial.write(ping_center_dist);
+    out[1] = ping_center_dist;
+    out[0] = 1;
   }
   else if (in == 202){
-    Serial.write(ping_right_dist);
+    out[1] = ping_right_dist;
+    out[0] = 1;
   }
   //Send error code
   else {
-    Serial.write(255);
+    out[1] = 255;
+    out[0] = 1;
   }
+  Serial.println(out[0]);
+  Serial.println(out[1]);
   
   //apply motor values
   setMotorValues();
+ 
 }
 
+void requestEvent(){
+  if(out[0] == 1){
+    Wire.write(byte(out[1]));
+    out[0] = 0;
+  }
+}
 
 void setMotorValues()
 {
