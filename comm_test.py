@@ -11,22 +11,26 @@ baud = 9600
 i=0
 
 time1 = time.time()
-while i < 10:
+
+#for i in range(1,10):	
+	#ard.move('r',1)
+	#time.sleep(1)
 	
-	ard.move(0,0)
-	ard.setFlags()
-	while  ard.isReady == 0:
-		ard.setFlags()
-		pass
+#ard.move('f',0)
+
+ard.move('f',0)
+
+
+
+	
 	
 	#~ ard.write(bytes(0))
 	#~ while ard.inWaiting() == 0:
 		#~ pass
 	#~ print(ord(ard.read()))
 	
-	i = i + 1
 	
-print(time.time()-time1)
+#print(time.time()-time1)
 
 #~ ard.close()
 

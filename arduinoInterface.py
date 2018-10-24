@@ -7,43 +7,25 @@ class arduinoInterface:
 	def __init__(self):
 		#COM port selection to establish connection with the ardiuno.
 		PORT = '/dev/ttyACM0' #orignally set to /dev/ttyUSB0
-		#PORT = '/dev/ttyACM1'
 		baud = 9600
 		self.arduino = serial.Serial(PORT, baud, timeout=0)
-		#Flags and their default values
-		self.isReady = 1
-		self.isError = 0
-		self.isEmergencyStop = 0
 
 	# move function accepts linear and angular velocity and gives commands to arduino
-	# vel_lin = {0,10}
-	# vel_ang = {-4,4} positive is left
-	def move(self, vel_lin, vel_ang):
-		vel_lin = vel_lin * 10
-		vel_ang = -vel_ang + 5
-		vel = vel_lin + vel_ang
-		self.isReady = 0
-		self.arduino.write(str(vel))
+	# direction = {'f', 'r', 'l'}
+	# magnitude = {1-3}
+	def move(self, direction, magnitude):
+		if direction == 'f':
+			self.arduino.write(str(magnitude))
+		elif direction == 'l':
+			self.arduino.write(str(magnitude+10))
+		elif direction == 'r':
+			self.arduino.write(str(magnitude+20))
 	
-	def setFlags(self):		#add error and emergency handling
+	def checkForError(self):
 		if self.arduino.inWaiting() > 0:
-			self.isReady = 1
-		self.arduino.reset_input_buffer();
-			
-	
-	def getIsReady(self):
-		self.setFlags()
-		return self.isReady
-		
-	def getPing(self):
-		self.arduino.write('200')
-		leftPingDist = ord(arduino.read(1))
-		self.arduino.write('201')
-		centerPingDist = ord(arduino.read(1))
-		self.arduino.write('202')
-		rightPingDist = ord(arduino.read(1))
-		ping = [leftPingDist,centerPingDist,rightPingDist]
-		return ping
+			self.arduino.reset_input_buffer();
+			return 1
+		return 0
 
 	def done(self):
 		self.move(0,0)

@@ -9,19 +9,21 @@ int ping_right_dist;
 int ping_left_dist;
 int ping_center_dist;
 double BOT_WIDTH = 33.02; //cm
+const int SAFETY_RADIUS = 1;
 
 //motor_values contain the values to be sent from the arduino to the motor controller
 int motor_values[] = {0,0,0,0,0,0};
 
 unsigned char in = 0;
 
-int in_lin, in_ang;
+int magnitude_value, direction_value;
 unsigned long time;
 int i;
 
 
 void setMotorValues();
 void getPing();
+void stop();
 
 void setup() {
   // initialize serial communication:
@@ -47,67 +49,85 @@ void loop() {
     }
 
     // when command is recieved, fetch command code
+  while(Serial.available() > 0){
     in = Serial.parseInt();
-    
-  
-  //Internal latency Test
-  //About 6-7ms per command
-  /*
-  in = 200;
-  if(i < 10){
-    i++;
-  }else{
-    time = millis() - time;
-    Serial.println(time);
-    time = millis();
-    i=0;
   }
-  */
-  
-  getPing();
 
   /*
     Interpret Command Codes
-    If motor control is requested, execute motor control, and write value of 250 to the Jetson to indicate that the action is complete.
-    If ping value is requested, write ping value.
-    If sent command is invalid, write value of 255
+    0-9 move forward
+    10-19 move left
+    20-29 move right
   */
   
   //set bot movement to zero
-  if(in == 0){
+  /*if(in == 0){
     move(0,0,.5,motor_values);
-    Serial.write(250);            //write 250 if successful move
   }
   //set bot movement to a given linear and angular velocity
-  else if (in > 0 && in < 110){
-    //calc values
-    in_lin = in/10;
-    in_ang = in % 10;
-    //make sure that angle value is correct
-    if(in_ang == 0)
-      in_ang = 1;
+  else if (in > 0 && in <30){
+    //get angle and magnitude
+    magnitude_value = in % 10;
+    direction_value = in/10;
     //set movement
-    move((float)in_lin/10, (float)(in_ang-5)/-5, .5, motor_values);
-    Serial.write(250);            //write 250 if successful move
-  }
-  else if (in == 200){
-    Serial.write(ping_left_dist);
-  }
-  else if (in == 201){
-    Serial.write(ping_center_dist);
-  }
-  else if (in == 202){
-    Serial.write(ping_right_dist);
-  }
-  //Send error code
-  else {
-    Serial.write(255);
+    switch(direction_value){
+      case 0 :
+        move((float)magnitude_value*(10/9)/10, 0, .5, motor_values);
+        break;
+      case 1 :
+        move(0, (float)magnitude_value*(10/9)/10, .5, motor_values);
+        break;
+      case 2 :
+        move(0, (-1)*(float)magnitude_value*(10/9)/10, .5, motor_values);
+        break;
+        
+    }*/
+    
+    switch(in){
+       case 0:
+         move(0, 0, .5, motor_values);
+         break;
+       case 1:
+         move(.2, 0, .5, motor_values);
+         break;
+       case 2:
+         move(.5, 0, .5, motor_values);
+         break;
+       case 3:
+         move(1, 0, .5, motor_values);
+         break;
+       case 11:
+         move(0, .2, .5, motor_values);
+         break;
+       case 12:
+         move(0, .5, .5, motor_values);
+         break;
+       case 13:
+         move(0, 1, .5, motor_values);
+         break;
+       case 21:
+         move(0, -.2, .5, motor_values);
+         break;
+       case 22:
+         move(0, -.5, .5, motor_values);
+         break;
+       case 23:
+         move(0, -1, .5, motor_values);
+         break;
+    }
+    
   }
   
   //apply motor values
   setMotorValues();
 }
 
+void safetyCheck(void){
+  if(ping_left_dist < SAFETY_RADIUS  || ping_center_dist < SAFETY_RADIUS  || ping_right_dist < SAFETY_RADIUS){
+    move(0,0,.5,motor_values);
+    setMotorValues();
+  }
+}
 
 void setMotorValues()
 {
@@ -121,9 +141,13 @@ void setMotorValues()
 
 
 void getPing(){
+  //long durationL, durationR, durationC, inchesL, inchesR, inchesC;
+
+  // sending left side pulsevoid getPing(){
   long durationL, durationR, durationC, inchesL, inchesR, inchesC;
 
   // sending left side pulse
+  pinMode(leftPing, OUTPUT);
   pinMode(leftPing, OUTPUT);
   digitalWrite(leftPing, LOW);
   delayMicroseconds(2);
