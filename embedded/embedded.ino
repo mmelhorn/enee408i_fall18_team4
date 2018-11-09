@@ -116,7 +116,7 @@ void loop() {
          break;
     }
     
-  }
+ 
   
   //apply motor values
   setMotorValues();

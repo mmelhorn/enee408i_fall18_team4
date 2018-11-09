@@ -16,9 +16,8 @@ time1 = time.time()
 	#ard.move('r',1)
 	#time.sleep(1)
 	
-#ard.move('f',0)
-
 ard.move('f',0)
+
 
 
 
