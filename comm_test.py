@@ -10,14 +10,14 @@ baud = 9600
 
 i=0
 
-time1 = time.time()
+#time1 = time.time()
 
 #for i in range(1,10):	
 	#ard.move('r',1)
 	#time.sleep(1)
-	
-ard.move('f',0)
 
+
+ard.move('f',0)
 
 
 

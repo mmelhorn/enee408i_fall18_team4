@@ -1,6 +1,6 @@
 #Import packages here.
 from collections import deque
-from Adafruit_IO import Client
+#from Adafruit_IO import Client
 import numpy as np
 import argparse
 import imutils
@@ -14,6 +14,11 @@ from arduinoInterface import arduinoInterface
 #baud = 9600
 
 arduino = arduinoInterface()
+
+#global vars for movement control
+time_present = time.time()
+time_past = 0
+run_code = 0
 
 time.sleep(5)
 
@@ -43,7 +48,6 @@ else:
 
 prevMovement = ' '
 while True: # infinite loop
-	
 	if (True):
 		#Current frame.
 		(grabbed, frame) = camera.read()
@@ -107,22 +111,34 @@ while True: # infinite loop
 		movement = ' '
 		#if flag == 0:
 		start = 1;
-		if rad >= 50 and arduino.getIsReady():
-			arduino.move(0,0)
-			print("stop")
+		
+		#Decide whether or not to run
+		time_present = time.time();
+		time_response_margin = 1
+		if(time_present - time_past > time_response_margin):
+			run_code = 1
+			time_past = time_present
+		else:
+			run_code = 0
+
+		#Run move code
+		if run_code==1:
+			if rad >= 50:
+				arduino.move('f',0)
+				print("stop")
 	
-		if xAxis >= 250 and xAxis <= 350 and rad < 50 and arduino.getIsReady():
-			arduino.move(4,0)
-			print("forward")
+			if xAxis >= 250 and xAxis <= 350 and rad < 50:
+				arduino.move('f',2)
+				print("forward")
 
-		if xAxis <= 250 and rad < 50 and arduino.getIsReady():
-			arduino.move(0,2)
-			print("turn left")
+			if xAxis <= 250 and rad < 50:
+				arduino.move('l',2)
+				print("turn left")
 
-		if xAxis >= 350 and rad < 50 and arduino.getIsReady():
-			arduino.move(0,-2)
-			print("turn right")
-
+			if xAxis >= 350 and rad < 50:
+				arduino.move('r',2)
+				print("turn right")
+	
 		#if flag == 1:
 			#if xPrev <= 10: #exited left - x is < 10
 				#movement = 'f'
@@ -139,7 +155,7 @@ while True: # infinite loop
 
 		if (prevMovement != movement):
 			print(movement)
-			arduino.write(movement.encode())
+			#arduino.write(movement.encode())
 			prevMovement = movement
 
 

@@ -30,3 +30,6 @@ class arduinoInterface:
 	def done(self):
 		self.move(0,0)
 		self.arduino.close()
+	
+	def hello(self):
+		print('hello')
