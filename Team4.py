@@ -112,7 +112,7 @@ while True: # infinite loop
 		#if flag == 0:
 		start = 1;
 		
-		#Decide whether or not to run
+		#Decide whether or not to move
 		time_present = time.time();
 		time_response_margin = 1
 		if(time_present - time_past > time_response_margin):
@@ -121,23 +121,32 @@ while True: # infinite loop
 		else:
 			run_code = 0
 
+		min_radius = 30
+		max_radius = 100
+		left_border = 150
+		right_border = 450
+		
 		#Run move code
 		if run_code==1:
-			if rad >= 50:
+			if rad >= max_radius:
 				arduino.move('f',0)
 				print("stop")
 	
-			if xAxis >= 250 and xAxis <= 350 and rad < 50:
-				arduino.move('f',2)
+			if xAxis >= left_border and xAxis <= right_border and rad < max_radius and rad > min_radius:
+				arduino.move('f',1)
 				print("forward")
 
-			if xAxis <= 250 and rad < 50:
-				arduino.move('l',2)
+			if xAxis <= left_border and rad < max_radius and rad > min_radius:
+				arduino.move('l',1)
 				print("turn left")
 
-			if xAxis >= 350 and rad < 50:
-				arduino.move('r',2)
+			if xAxis >= right_border and rad < max_radius and rad > min_radius:
+				arduino.move('r',1)
 				print("turn right")
+			if rad < min_radius:
+				arduino.move('f',0)
+				print("out of range")
+
 	
 		#if flag == 1:
 			#if xPrev <= 10: #exited left - x is < 10

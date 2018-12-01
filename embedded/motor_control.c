@@ -1,11 +1,12 @@
 /* Motor Controller */
 
 
+
 #include <stdlib.h>
 
 
-#define MAX_VELOCITY 200		// reduces maximum velocity from 255 to 200
-
+#define MAX_VELOCITY 150		// reduces maximum velocity from 255 to 200
+#define LEFT_SHIFT 5
 void direct_motor_control(int vel_l, int vel_r, int[]);
 void move(float, float, float, int[]);
 
@@ -27,12 +28,12 @@ void move(float lin_vel_in, float ang_vel_in, float balance, int out[])
 	vel_ang = ang_vel_in * MAX_VELOCITY;
 	
 	// Calculate velocities for each wheel
-	vel_R = vel_lin + (vel_ang*balance);
+	vel_R = vel_lin + (vel_ang*balance)-LEFT_SHIFT;
 	vel_L = vel_lin - (vel_ang*(1-balance));
 	
 	//Limit excessive velocity
 	if(vel_R>MAX_VELOCITY)
-		vel_R = MAX_VELOCITY;
+		vel_R = MAX_VELOCITY-LEFT_SHIFT;
 	else if (vel_L>MAX_VELOCITY)
 		vel_L = MAX_VELOCITY;
 	

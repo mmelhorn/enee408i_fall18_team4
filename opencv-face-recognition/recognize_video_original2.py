@@ -28,6 +28,7 @@ log.addHandler(logging.StreamHandler())
 log.setLevel(logging.DEBUG)
 logging.getLogger("flask_ask").setLevel(logging.DEBUG)
 
+
 # construct the argument parser and parse the arguments, first two args added
 ap = argparse.ArgumentParser()
 ap.add_argument("-v", "--video",
@@ -77,12 +78,10 @@ else:
 # start the FPS throughput estimator
 #fps = FPS().start()
 
-# making name a global variable
-
+name1 = "who knows"
 
 # loop over frames from the video file stream
 while True:
-	
 	# grab the frame from the threaded video stream
 	_,frame = video.read() #edit made here
 
@@ -146,32 +145,12 @@ while True:
 			cv2.putText(frame, text, (startX, y),
 				cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 0, 255), 2)
 
-		#@ask.launch
-
-		#def welcomemsg():
-		#	welcome_msg = render_template('welcome')
-		#	return question(welcome_msg)
-
-		# prev ask.intent loc	
-
-		#break		
-
 	# update the FPS counter
 	#fps.update()
 
-	#previous show output frame	
+	# show the output frame
 	cv2.imshow("Frame", frame)
 	key = cv2.waitKey(1) & 0xFF
-
-
-	#@ask.intent("IdentifyIntent")
-
-	# show the output frame
-
-	#def name_response(name1):
-	#	if proba > 0.5 and name1 is not "unknown":
-	#		return statement("You are {}".format(name1))
-	#app.run()
 
 	# if the `q` key was pressed, break from the loop
 	if key == ord("q"):
@@ -186,9 +165,10 @@ while True:
 	@ask.intent("IdentifyIntent")
 
 	def name_response(name1):
-		if proba > 0.5 and name1 is not "unknown":
+		if proba > 0.5: #and name1 is not "unknown":
 			return statement("You are {}".format(name1))
 	app.run()
+
 
 # stop the timer and display FPS information
 #fps.stop()

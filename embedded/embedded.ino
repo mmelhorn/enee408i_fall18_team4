@@ -89,31 +89,31 @@ void loop() {
          move(0, 0, .5, motor_values);
          break;
        case 1:
-         move(.2, 0, .5, motor_values);
+         move(.35, 0, .5, motor_values);
          break;
        case 2:
          move(.5, 0, .5, motor_values);
          break;
        case 3:
-         move(1, 0, .5, motor_values);
+         move(.75, 0, .5, motor_values);
          break;
        case 11:
-         move(0, .2, .5, motor_values);
+         move(0, .35, .5, motor_values);
          break;
        case 12:
          move(0, .5, .5, motor_values);
          break;
        case 13:
-         move(0, 1, .5, motor_values);
+         move(0, .75, .5, motor_values);
          break;
        case 21:
-         move(0, -.2, .5, motor_values);
+         move(0, -.35, .5, motor_values);
          break;
        case 22:
          move(0, -.5, .5, motor_values);
          break;
        case 23:
-         move(0, -1, .5, motor_values);
+         move(0, -.75, .5, motor_values);
          break;
     }
     

@@ -17,16 +17,7 @@ from collections import deque
 # last 3 imports added
 from flask import Flask, render_template
 from flask_ask import Ask, statement, question
-import logging
 # flask imports added
-
-app = Flask(__name__)
-ask = Ask(app,"/")
-
-log = logging.getLogger()
-log.addHandler(logging.StreamHandler())
-log.setLevel(logging.DEBUG)
-logging.getLogger("flask_ask").setLevel(logging.DEBUG)
 
 # construct the argument parser and parse the arguments, first two args added
 ap = argparse.ArgumentParser()
@@ -77,12 +68,8 @@ else:
 # start the FPS throughput estimator
 #fps = FPS().start()
 
-# making name a global variable
-
-
 # loop over frames from the video file stream
 while True:
-	
 	# grab the frame from the threaded video stream
 	_,frame = video.read() #edit made here
 
@@ -135,60 +122,40 @@ while True:
 			preds = recognizer.predict_proba(vec)[0]
 			j = np.argmax(preds)
 			proba = preds[j]
-			name1 = le.classes_[j]
+			name = le.classes_[j]
 
 			# draw the bounding box of the face along with the
 			# associated probability
-			text = "{}: {:.2f}%".format(name1, proba * 100)
+			text = "{}: {:.2f}%".format(name, proba * 100)
 			y = startY - 10 if startY - 10 > 10 else startY + 10
 			cv2.rectangle(frame, (startX, startY), (endX, endY),
 				(0, 0, 255), 2)
 			cv2.putText(frame, text, (startX, y),
 				cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 0, 255), 2)
 
-		#@ask.launch
 
-		#def welcomemsg():
-		#	welcome_msg = render_template('welcome')
-		#	return question(welcome_msg)
-
-		# prev ask.intent loc	
-
-		#break		
+			if proba > 0.5 and name != 'unknown'
+				break
 
 	# update the FPS counter
 	#fps.update()
 
-	#previous show output frame	
+	# show the output frame
 	cv2.imshow("Frame", frame)
 	key = cv2.waitKey(1) & 0xFF
-
-
-	#@ask.intent("IdentifyIntent")
-
-	# show the output frame
-
-	#def name_response(name1):
-	#	if proba > 0.5 and name1 is not "unknown":
-	#		return statement("You are {}".format(name1))
-	#app.run()
 
 	# if the `q` key was pressed, break from the loop
 	if key == ord("q"):
 		break
-	
-	@ask.launch
 
-	def welcomemsg():
-		welcome_msg = render_template('welcome')
-		return question(welcome_msg)
+@ask.launch
 
-	@ask.intent("IdentifyIntent")
+def welcomemsg():
+	welcome_msg = render_template('welcome')
+	return statement(welcome_msg)
 
-	def name_response(name1):
-		if proba > 0.5 and name1 is not "unknown":
-			return statement("You are {}".format(name1))
-	app.run()
+@ask.intent("Identify")
+return statement("You are {}".format(name))
 
 # stop the timer and display FPS information
 #fps.stop()
