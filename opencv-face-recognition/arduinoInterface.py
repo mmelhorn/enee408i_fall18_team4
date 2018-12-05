@@ -21,15 +21,8 @@ class arduinoInterface:
 		elif direction == 'r':
 			self.arduino.write(str(magnitude+20))
 	
-	def checkForError(self):
-		if self.arduino.inWaiting() > 0:
-			self.arduino.reset_input_buffer();
-			return 1
-		return 0
-
 	def done(self):
-		self.move(0,0)
+		self.arduino.write(str(0))
 		self.arduino.close()
 	
-	def hello(self):
-		print('hello')
+

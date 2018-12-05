@@ -1,1 +1,5 @@
 welcome: Hi, I'm Elroy. What can I do for you?
+
+round: Can you repeat the numbers {{numbers|join(", ")}} in reverse order?
+win: Good job!
+lose: Sorry, that's the wrong answer.

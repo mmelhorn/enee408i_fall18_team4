@@ -155,7 +155,7 @@ def welcomemsg():
 	return statement(welcome_msg)
 
 @ask.intent("Identify")
-return statement("You are {}".format(name))
+return statement("You are " + name)
 
 # stop the timer and display FPS information
 #fps.stop()

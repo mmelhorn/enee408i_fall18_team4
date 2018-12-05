@@ -146,13 +146,19 @@ while True:
 			cv2.putText(frame, text, (startX, y),
 				cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 0, 255), 2)
 
-		#@ask.launch
+		@ask.launch
 
-		#def welcomemsg():
-		#	welcome_msg = render_template('welcome')
-		#	return question(welcome_msg)
+		def welcomemsg():
+			welcome_msg = render_template('welcome')
+			return question(welcome_msg)
 
 		# prev ask.intent loc	
+
+		@ask.intent("IdentifyIntent")
+
+		def name_response(name1):
+			if proba > 0.5 and name1 is not "unknown":
+				return statement("You are " + name1)
 
 		#break		
 
@@ -177,17 +183,12 @@ while True:
 	if key == ord("q"):
 		break
 	
-	@ask.launch
+	#@ask.launch
 
-	def welcomemsg():
-		welcome_msg = render_template('welcome')
-		return question(welcome_msg)
+	#def welcomemsg():
+	#	welcome_msg = render_template('welcome')
+	#	return question(welcome_msg)
 
-	@ask.intent("IdentifyIntent")
-
-	def name_response(name1):
-		if proba > 0.5 and name1 is not "unknown":
-			return statement("You are {}".format(name1))
 	app.run()
 
 # stop the timer and display FPS information

@@ -95,7 +95,7 @@ void loop() {
          move(.5, 0, .5, motor_values);
          break;
        case 3:
-         move(.75, 0, .5, motor_values);
+         move(1, 0, .5, motor_values);
          break;
        case 11:
          move(0, .35, .5, motor_values);
